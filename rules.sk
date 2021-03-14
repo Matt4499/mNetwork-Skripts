@@ -1,0 +1,9 @@
+command /rules:
+    trigger:
+        message "&cRules: "
+        message "&cPlease view the most updated version of the Rules on &e/discord"
+
+
+        
+on skript load:
+    execute console command "sk reload cmdblock"

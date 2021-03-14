@@ -1,0 +1,195 @@
+#========================================================#
+#
+#					  AltsSK
+#						1.0
+#
+#========================================================#
+#		 		by sh4dow | SpigotMC
+#========================================================#
+
+
+
+#========================================================#
+#		 				Config
+#
+#				Edit to your own liking
+#========================================================#
+options:
+	command: alts											# Default command /alts
+	permission: altssk.access								# Access to all commands
+	notify-permission: altssk.notify						# Get notifications & access to /alts notify
+	top-message: &c&m----------------------&7[&cAlts&7]&m-----------------------
+	bottom-message: &c&m-----------------------------------------------------
+
+
+#========================================================#
+#		 				Code
+#
+# 	   DON'T TOUCH UNLESS YOU KNOW WHAT YOU'RE DOING
+#========================================================#
+
+command /{@command} [<text>] [<offline player>]:
+	trigger:
+		if arg 1 is set:
+			if arg 1 is "reset":
+				if player has permission "{@permission}":
+					set {doclose} to true
+					message "{@top-message}"
+					message "&cAll alts data will be reset in &e10&c seconds."
+					message ""
+					message "&f  Type &e/alts cancel&f to cancel."
+					message "{@bottom-message}"
+					set {_ahHQxwpZffurCvrZtPCBYfwscJaFpnXnHYYqsxwqhZD} to 10
+					loop 10 times:
+						if {doclose} isn't set:
+							stop trigger
+						wait 1 second
+						remove 1 from {_ahHQxwpZffurCvrZtPCBYfwscJaFpnXnHYYqsxwqhZD}
+						if {doclose} isn't set:
+							stop trigger
+						message "{@top-message}"
+						message "&cAll alts data will be reset in &e%{_ahHQxwpZffurCvrZtPCBYfwscJaFpnXnHYYqsxwqhZD}%&c seconds."
+						message ""
+						message "&f  Type &e/alts cancel&f to cancel."
+						message "{@bottom-message}"
+						if {doclose} isn't set:
+							stop trigger
+						if {_ahHQxwpZffurCvrZtPCBYfwscJaFpnXnHYYqsxwqhZD} is 0:
+							message "{@top-message}"
+							message "&aAll alts data has been &4reset&a."
+							message "{@bottom-message}"
+							delete {doclose}
+							delete {alts::*}
+							delete {ips::*}
+							delete {currentip::*}
+							delete {altsk::*}
+							stop trigger
+				else:
+					message "{@top-message}"
+					message "&b&lAlts &7- &cNo permission."
+					message "{@bottom-message}"
+			else if arg 1 is "cancel":
+				if player has permission "{@permission}":
+					delete {doclose}
+				else:
+					message "{@top-message}"
+					message "&b&lAlts &7- &cNo permission."
+					message "{@bottom-message}"
+			else if arg 1 is "history":
+				if player has permission "{@permission}":
+					if {currentip::%arg-2's uuid%} is not set:
+						message "{@top-message}"
+						message ""
+						message "&cPlayer &f%arg-2%&c is not found in the database."
+						message ""
+						message "{@bottom-message}"
+						stop
+					message "{@top-message}"
+					message ""
+					message "&fIP history of &7%arg-2%&f:"
+					loop {ips::%arg-2's uuid%::*}:
+						message "&8- &7%loop-value%"
+					message ""
+					message "{@bottom-message}"
+				else:
+					message "{@top-message}"
+					message "&b&lAlts &7- &cNo permission."
+					message "{@bottom-message}"
+			else if arg 1 is "notify":
+				if player has permission "{@notify-permission}" or "{@permission}":
+					if {altsk::notify::%player%} is set:
+						message "{@top-message}"
+						message ""
+						message "&7Notifications has been &aenabled&7."
+						message ""
+						message "{@bottom-message}"
+						delete {altsk::notify::%player%}
+						stop
+					else:
+						set {altsk::notify::%player%} to true
+						message "{@top-message}"
+						message ""
+						message "&7Notifications has been &cdisabled&7."
+						message ""
+						message "{@bottom-message}"
+						stop
+				else:
+					message "{@top-message}"
+					message "&b&lAlts &7- &cNo permission."
+					message "{@bottom-message}"
+			else:
+				if player has permission "{@permission}":
+					set {_player} to arg-1 parsed as offline player
+					set {_uuid} to "%uuid of {_player}%"
+					if {currentip::%{_uuid}%} is not set:
+						message "{@top-message}"
+						message ""
+						message "&cPlayer &f%arg-1%&c is not found in the database."
+						message ""
+						message "{@bottom-message}"
+						stop
+					set {_ip} to {currentip::%{_uuid}%}
+					message "{@top-message}"
+					message ""
+					message "&fAll accounts on &7%{currentip::%{_uuid}%}%&f:"
+					loop {alts::%{_ip}%::*}:
+						message "&8- &7%loop-value%"
+					message ""
+					message "{@bottom-message}"
+				else:
+					message "{@top-message}"
+					message "&b&lAlts &7- &cNo permission."
+					message "{@bottom-message}"
+		else:
+			message "{@top-message}"
+			message ""
+			if player has permission "{@permission}":
+				message "&7/{@command} <player> &fView someone's alts"
+			if player has permission "{@permission}":
+				message "&7/{@command} history <player> &fView someone's IP history"
+			if player has permission "{@notify-permission}":
+				message "&7/{@command} notify &fToggle alts notifications"
+			message ""			
+			if player has permission "{@permission}":
+				message "&7/{@command} reset &cReset ALL alts & ip data"
+				message ""
+			message "{@bottom-message}"
+
+on join:
+	set {currentip::%player's uuid%} to player's ip
+	if {alts::%player's ip%::*} is not set:
+		add "%player%" to {alts::%player's ip%::*}
+	loop {alts::%player's ip%::*}:
+		if loop-value is player:
+			stop
+		if loop-index is player:
+			stop
+	add "%player%" to {alts::%player's ip%::*}
+
+on join:
+	if {ips::%player's uuid%::*} is not set:
+		add "%player's ip% (%now%)" to {ips::%player's uuid%::*}
+	loop {ips::%player's uuid%::*}:
+		set {_res} to loop-value
+		if {_res} contains "%player's ip%":
+			stop
+	add "%player's ip% - %now%" to {ips::%player's uuid%::*}
+
+on join:
+	loop {alts::%player's ip%::*}:
+		add 1 to {_a}
+		if {_a} is greater than 1:
+			loop all players:
+				if loop-player has permission "{@notify-permission}":
+					if {altsk::notify::%loop-player%} is set:
+						stop
+					send "&cAlts: &e%player% &7has alts." to loop-player
+					stop
+
+
+#========================================================#
+#
+# 				I hope you like my skript.
+#				Please don't steal the code.
+#					   Thank you. :)
+#========================================================#

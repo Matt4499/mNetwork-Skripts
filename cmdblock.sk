@@ -1,0 +1,20 @@
+command /help [<text>]:
+    aliases: helpop, ?, bukkit, spigot, paper, plugins, pl, ver, version, gc, icanhasbukkit, a, about
+    trigger:
+        if arg-1 is not set:
+            message "&cServer: &7For help, please view survival-rules-info on the &9/discord&7, or type /help [reason] and a staff member will help you." 
+        if arg-1 is set:
+            set {_sent} to false
+            loop all players:
+                if loop-player has permission "help.recieve":
+                    send "&cHelp(%player%&c): &7%arg-1%" to loop-player
+                    set {_sent} to true
+            if {_sent} is true:
+                message "&cServer: &7Staff have recieved your help request."
+            else:
+                message "&cServer: &7There are no staff online. Please ask for help in the &9/discord"
+command /helpreply <player> <text>:
+    permission: staff.helpreply
+    trigger:
+        if arg-1 and arg-2 are set:
+            send "&cHelp Reply(%player%&c): &7%colored arg-2%" to arg-1

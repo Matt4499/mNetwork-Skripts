@@ -1,0 +1,6 @@
+options:
+	line_1: &cmSMP | Survival | 1.16.5
+	line_2: Join the &9/discord&7!
+
+on server list ping:        
+	set motd to "{@line_1}%nl%{@line_2}"

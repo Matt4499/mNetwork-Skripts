@@ -1,0 +1,83 @@
+every 1 second:
+    loop all players:
+        add 1 to {%loop-player%.playtime.seconds}
+        if {%loop-player%.playtime.seconds} is 60:
+            add 1 to {%loop-player%.playtime.minutes}
+            set {%loop-player%.playtime.seconds} to 0
+            if {%loop-player%.playtime.minutes} is 60:
+                add 1 to {%loop-player%.playtime.hours}
+                set {%loop-player%.playtime.minutes} to 0
+                if {%loop-player%.playtime.hours} is greater than or equal to 24:
+                    add 1 to {%loop-player%.playtime.days}
+                    subtract 24 from {%loop-player%.playtime.hours}  
+                    if {%loop-player%.playtime.days} is 7:
+                        set {%loop-player%.playtime.days} to 0
+                        add 1 to {%loop-player%.playtime.weeks}
+                        if {%loop-player%.playtime.weeks} is 4:
+                            set {%loop-player%.playtime.weeks} to 0
+                            add 1 to {%loop-player%.playtime.months}
+
+
+command /playtime [<offlineplayer>]:
+    aliases: pt
+    trigger:
+        if {%player%.playtime.weeks} is not set:
+            set {%player%.playtime.seconds} to 0
+            set {%player%.playtime.minutes} to 0
+            set {%player%.playtime.days} to 0
+            set {%player%.playtime.hours} to 0
+            set {%player%.playtime.months} to 0
+            set {%player%.playtime.weeks} to 0
+
+        if arg-1 is not set:
+            set {_seconds} to {%player%.playtime.seconds}
+            set {_minutes} to {%player%.playtime.minutes}
+            set {_hours} to {%player%.playtime.hours}
+            set {_days} to {%player%.playtime.days}
+            set {_months} to {%player%.playtime.months}
+            set {_weeks} to {%player%.playtime.weeks}
+            message "&cPlayTime: &7%{_months}% &7months, &7%{_weeks}% &7weeks, &7%{_days}% &7days, &7%{_hours}% &7hours, &7%{_minutes}% &7minutes, &7%{_seconds}% &7seconds"
+            stop
+        if arg-1 is set:
+            if {%arg-1%.playtime.seconds} is not set:
+                message "&cPlayTime: &7That player has not played before."
+                stop
+            set {_seconds} to {%arg-1%.playtime.seconds}
+            set {_minutes} to {%arg-1%.playtime.minutes}
+            set {_hours} to {%arg-1%.playtime.hours}
+            set {_days} to {%arg-1%.playtime.days}
+            set {_months} to {%arg-1%.playtime.months}
+            set {_weeks} to {%arg-1%.playtime.weeks}
+            message "&cPlayTime of &e%arg-1%&c: &7%{_months}% &7months, &7%{_weeks}% &7weeks, &7%{_days}% &7days, &7%{_hours}% &7hours, &7%{_minutes}% &7minutes, &7%{_seconds}% &7seconds"
+
+command /resetplaytimes:
+    permission: staff.resetplaytimes
+    trigger:
+        loop all players:
+            set {%loop-player%.playtime.seconds} to 0
+            set {%loop-player%.playtime.minutes} to 0
+            set {%loop-player%.playtime.days} to 0
+            set {%loop-player%.playtime.hours} to 0
+            set {%loop-player%.playtime.months} to 0
+            set {%loop-player%.playtime.weeks} to 0
+            message "&cPlayTime: &7Reset &e%loop-player%&7's playtime"
+
+
+on quit:
+    set {_time} to now
+    subtract 6 hours from {_time}
+    set {%player%.lastseen} to {_time}
+
+on join:
+    make player execute "/playtime"
+
+
+command /seen <offlineplayer>:
+    trigger:
+        if {%arg-1%.lastseen} is not set:
+            message "&cPlaytime: &7That player has never joined, or has not logged in since the plugin was installed on 2/10/2021."
+            stop
+        else:
+            set {_time} to {%arg-1%.lastseen}
+            message "&cPlayTime: &e%arg-1% &7was last seen on &e%{_time}%"
+            stop

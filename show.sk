@@ -1,0 +1,17 @@
+command /show:
+    cooldown: 10 seconds
+    cooldown storage: {show::%player's ip%}
+    trigger:
+        if player's tool is not air:
+            set {_name} to name of player's tool
+            set {_x} to amount of player's held item in player's inventory
+            if player's tool is enchanted:
+                if player's tool's name is not set:
+                    broadcast "&e%player% &7shows &e%{_x}%x %type of tool%%nl%&7%tool's enchantments%"
+                    stop
+                else:
+                    broadcast "&e%player% &7shows &e%{_x}%x %tool's name% &7(%type of tool%&7) %nl%&7%tool's enchantments%"
+                    stop
+            else:
+                broadcast "&e%player% &7shows &e%{_x}%x %tool's name ? type of tool%"
+                stop

@@ -1,0 +1,31 @@
+on rightclick holding chest:
+    if name of player's tool is "&aVote Crate":
+        cancel event
+        remove 1 of chest named "&aVote Crate" from player
+        set {_votechest} to chest named "&aVote Crate"
+        set {_item} to a random item out of 16 iron ingot or 8 tnt or 16 bottle o' enchanting or 2 diamonds or 16 cooked beef or 16 cooked porkchop or diamond ore or {_votechest} or 64 cobblestone or 64 dirt or cake or 32 stone bricks or iron sword or 64 bottle o' enchanting or golden apple
+        broadcast "&e%player% &7has won &e%{_item}% &7from a &a/vote &7crate!"
+        give player {_item}
+        set {_chance} to a random integer between 1 and 200
+        if {_chance} is less than 5:
+            set {_secretitem} to paper named "&aRead Me" with lore "You won a super lucky prize. Contact @Matt4499 to claim."
+            set {_niceitem} to a random item out of 4 ancient debris or 16 gold ingot or 64 tnt or {_secretitem} or 2 diamond blocks or 4 gold blocks or 2 emerald blocks or 8 iron blocks 
+            broadcast "&e%player% &7got super-lucky and recieved &e%{_niceitem}% &7from a &a/vote &7crate!"
+            give player {_niceitem}
+
+
+command /votekey <player>:
+    permission: staff.givevotekey
+    trigger:
+        give arg-1 1 of chest named "&aVote Crate"
+
+
+command /vote:
+    trigger:
+        message "&c1. <link:https://minecraftservers.org/vote/606521>https://minecraftservers.org/vote/606521<reset>" 
+        message "&72. <link:https://minecraftlist.org/vote/21205>https://minecraftlist.org/vote/21205"
+        message "&c3. <link:https://minecraft-mp.com/server/279487/vote/>https://minecraft-mp.com/server/279487/vote/"
+        message "&74. <link:https://topg.org/Minecraft/in-623574>https://topg.org/Minecraft/in-623574"
+        message "&c5. <link:https://www.planetminecraft.com/server/mnetwork-1-16-5-survival-more-soon/vote/>https://www.planetminecraft.com/server/mnetwork-1-16-5-survival-more-soon/vote/"
+        message "&4MAKE SURE YOU HAVE ROOM IN YOUR INVENTORY FOR THE VOTE CRATE."
+        message " "

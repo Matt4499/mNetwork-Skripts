@@ -1,0 +1,12 @@
+command /ping [<player>]:
+    trigger:
+        if arg-1 is not set:
+            message "&cPing: &7%player's ping%&7ms"
+        if arg-1 is set:
+            if player is op:
+                message "&cPing of %arg-1%&c: &7%arg-1's ping%"
+command /pingall:
+    permission: staff.pingall
+    trigger:
+        loop all players:
+            message "&cPing: &e%loop-player% &7%loop-player's ping%&7ms" to player

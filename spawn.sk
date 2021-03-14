@@ -1,0 +1,58 @@
+command /spawn:
+    aliases: hub, lobby, zerozero, 00
+    trigger:
+        set {Spawn::%player%} to true
+        send "&cServer: &7Do not move for 3 seconds..."
+        wait 3 seconds
+        if {Spawn::%player%} is true:
+            delete {Spawn::%player%}
+            teleport player to {spawn}
+            message "&cServer: &7Welcome to spawn!"
+ 
+on any movement:
+    if {Spawn::%player%} is true:
+        set {Spawn::%player%} to false
+        send "&cServer: &7You moved. Cancelled the teleport."
+
+command /setspawn:
+    trigger:
+        if player is op:
+            set {spawn} to player's location
+
+command /trust <player>:
+    trigger:
+        make player execute "/land friendall %arg-1%"
+
+command /untrust <player>:
+    trigger:
+        make player execute "/land unfriendall %arg-1%"
+
+command /claim:
+    trigger:
+        make player execute "/land claim"
+command /unclaim:   
+    trigger:
+        make player execute "/land unclaim"
+
+command /unclaimall:
+    trigger:
+        make player execute "/land unclaimall"
+on join:
+    player has played before:
+        set the join message to "&e%player% &7has joined the game."
+    player has not played before:
+        set {%player%.firstjoindate} to now
+        set {_totaljoins} to size of all offline players
+        set {%player%.deaths} to 0
+        set the join message to "&e%player% &c(%{_totaljoins}%) &7has joined for the first time!"
+        message "&9Discord: &7Join our /discord&7!"
+        message "&cRules: &7Read the &e/rules&7."
+        teleport player to {spawn}
+
+on quit:
+    set the leave message to "&e%player% &7has left."
+
+command /totaljoins:
+    trigger:
+        set {_totaljoins} to size of all offline players
+        message "&cServer: &e%{_totaljoins}% &7different players have joined the server."

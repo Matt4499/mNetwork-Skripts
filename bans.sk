@@ -1,0 +1,200 @@
+command /discord:
+    trigger:
+        message "Join our Discord here: &a<link:https://discord.gg/5z5f9HxGtB>https://discord.gg/5z5f9HxGtB"
+
+
+command /ban <offlineplayer> <text>:
+    permission: staff.ban
+    trigger:
+        if executor is console:
+            set {_banner} to "Console"
+        else:
+            set {_banner} to player's displayname
+        if arg-2 contains "-s":
+            set {_text} to arg-2
+            replace all "-s" with "" in {_text}
+            ban arg-1 due to {_text}
+            set {_text} to arg-2
+            replace all "-s" with "" in {_text}
+            loop all players:
+                if loop-player has permission "staff.sban":
+                    send "&cBans (Silent): &e%{_banner}% &7has banned &e%arg-1% &7for: &e%{_text}%" to loop-player
+        if arg-2 does not contain "-s":
+            broadcast "&cBans: &e%{_banner}% &7has banned &e%arg-1% &7for: &e%arg-2%"
+            ban arg-1 due to arg-2
+        if arg-1 is online:
+            kick arg-1 due to arg-2
+            stop
+command /unban <offlineplayer> [<text>]:
+    aliases: pardon
+    permission: staff.unban
+    trigger:
+        if executor is console:
+            set {_banner} to "Console"
+        else:
+            set {_banner} to player's displayname
+        unban arg-1
+        if arg-2 is not set:
+            broadcast "&cBans: &e%{_banner}% &7has unbanned &e%arg-1%"
+        if arg-2 is set:
+            if arg-2 contains "-s":
+                set {_text} to arg-2
+                replace all "-s" with "" in {_text}
+                loop all players:
+                    if loop-player has permission "staff.sban":
+                        send "&cBans (Silent): &e%{_banner}% &7has unbanned &e%arg-1% &7for: &e%{_banner}%" to loop-player
+            else:
+                broadcast "&cBans: &e%{_banner}% &7has unbanned &e%arg-1% &7for: &e%arg-2%"
+
+
+command /mute <offlineplayer> <text>:
+    permission: staff.mute
+    trigger:
+        if executor is console:
+            set {_banner} to "Console"
+        else:
+            set {_banner} to player's displayname
+        if arg-1 and arg-2 are set:
+            set {%arg-1%.muted} to true
+            set {%arg-1%.muted.reason} to arg-2
+            if arg-2 does not contain "-s":
+                broadcast "&cBans: &e%{_banner}% &7has muted &e%arg-1% &7for: &e%arg-2%"
+            if arg-2 contains "-s":
+                set {_text} to arg-2
+                replace all "-s" with "" in {_text}
+                loop all players:
+                    if loop-player has permission "staff.mute":
+                        send "&cBans(Silent): &e%{_banner}% &7has muted &e%arg-1% &7for: &e%{_text}%" to loop-player
+
+command /unmute <offlineplayer>:
+    permission: staff.unmute
+    trigger:
+        if executor is console:
+            set {_banner} to "Console"
+        else:
+            set {_banner} to player's displayname
+        if arg-1 is set:
+            delete {%arg-1%.muted}
+            broadcast "&cBans: &e%{_banner}% &7has unmuted &e%arg-1%"
+
+command /kick <player> <text>:
+    permission: staff.kick
+    trigger:
+        if executor is console:
+            set {_banner} to "Console"
+        else:
+            set {_banner} to player's displayname
+        if arg-2 contains "-s":
+            set {_text} to arg-2
+            replace all "-s" with "" in {_text}
+            kick arg-1 due to {_text}
+            set {_text} to arg-2
+            replace all "-s" with "" in {_text}
+            loop all players:
+                if loop-player has permission "staff.sban":
+                    send "&cBans (Silent): &e%{_banner}% &7has kicked &e%arg-1% &7for: &e%{_text}%" to loop-player
+        if arg-2 does not contain "-s":
+            kick arg-1 due to arg-2
+            broadcast "&cBans: &e%{_banner}% &7has kicked &e%arg-1% &7for: &e%arg-2%"
+
+command /warn <player> <text>:
+    permission: staff.warn
+    trigger:
+        if arg-1 and arg-2 are set:
+            message "&cWarns: &7You have been warned by &e%player% &7for: &e%arg-2%&7." to arg-1
+            message "&cWarns: &7Continuing such behavior will result in a mute/kick/ban." to arg-1
+            loop all players:
+                if loop-player has permission "staff.warn":
+                    message "&cWarns(Staff): &e%player% &7has warned &e%arg-1% &7for: &e%arg-2%&7." to loop-player
+
+
+command /staffmode [<text>]:
+    permission: staff.staffmode
+    aliases: sm
+    trigger:
+        if {staffmode.%player%} is false:
+            make player execute "/vanish"
+            make console execute "/gamemode spectator %player%"
+            set {staffmode.%player%} to true
+            if arg-1 is not set:
+                broadcast "&cServer: &e%player% &7has left."
+            loop all players:
+                if loop-player has permission "staff.sban":
+                    send "&cStaff: &e%player%&7 has entered staff mode." to loop-player
+            stop
+        if {staffmode.%player%} is true:
+            make player execute "/vanish"
+            make console execute "/gamemode survival %player%"
+            set {staffmode.%player%} to false
+            if arg-1 is not set:
+                broadcast "&cServer: &e%player% &7has joined the game."
+            loop all players:
+                if loop-player has permission "staff.sban":
+                    send "&cStaff: &e%player%&7 has exited staff mode." to loop-player
+            stop
+        if {staffmode.%player%} is not set:
+            make player execute "/vanish"
+            make console execute "/gamemode spectator %player%"
+            set {staffmode.%player%} to true
+            if arg-1 is not set:
+                broadcast "&cServer: &e%player% &7has left."
+            loop all players:
+                if loop-player has permission "staff.sban":
+                    send "&cStaff: &e%player%&7 has entered staff mode." to loop-player
+            stop
+
+command /bancheck <offlineplayer>:
+    permission: staff.bancheck
+    trigger:
+        if arg-1 is set:
+            if arg-1 is banned:
+                message "&cBans: &e%arg-1% &aIS &7banned"
+                stop
+            else:
+                message "&cBans: &e%arg-1% &cIS NOT &7banned."
+                stop
+
+on chat:
+    if {%player%.muted} is true:
+        cancel the event
+        message "&cMuted: &7You are temporarily-muted for: &e%{%player%.muted.reason}%"
+
+on sign change:
+    if {%player%.muted} is true:
+        set {_line1} to line 1
+        set {_line2} to line 2
+        set {_line3} to line 3
+        set {_line4} to line 4
+        loop all players:
+            if loop-player has permission "staff.signs":
+                message "&cSigns: &e%player% &7placed a sign while muted" to loop-player
+                message "&7%{_line1}%" to loop-player
+                message "&7%{_line2}%" to loop-player
+                message "&7%{_line3}%" to loop-player
+                message "&7%{_line4}%" to loop-player
+
+
+command /report <player> <text>:
+    trigger:
+        if arg-1 and arg-2 are set:
+            message "&cReports: &7Staff have recieved your report."
+            loop all players:
+                if loop-player has permission "staff.reports":
+                    message "&cReports: &e%player% &7has reported &e%arg-1% &7for: &e%arg-2%&7." to loop-player
+
+
+command /lockchat:
+    permission: staff.lockchat
+    trigger:
+        if {chat.locked} is true:
+            set {chat.locked} to false
+            broadcast "&cChat: &7Chat has been unlocked by &e%player%"
+            stop
+        else:
+            set {chat.locked} to true
+            broadcast "&cChat: &7Chat has been locked by &e%player%"
+on chat:
+    if {chat.locked} is true:
+        if player does not have permission "staff.bypasschatlock":
+            cancel event
+            message "&cChat: &7Chat is locked currently."

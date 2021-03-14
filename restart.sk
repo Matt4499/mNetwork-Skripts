@@ -1,0 +1,9 @@
+every 6 hours:
+    loop all players:
+        send "&cServer: &7Server will be restarting in 60 seconds." to loop-player
+    wait 55 seconds
+    loop all players:
+        send "&cServer: &7Server will be restarting in 5 seconds." to loop-player
+    wait 5 seconds
+    restart the server
+

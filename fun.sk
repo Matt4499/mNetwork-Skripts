@@ -1,0 +1,34 @@
+command /f:
+    aliases: payrespect, payrespects
+    cooldown: 60 seconds
+    cooldown storage: {f::%player's uuid%}
+    cooldown message: &cF: &7You can only pay respects every 60 seconds.
+    trigger:
+        add 1 to {totalfs}
+        broadcast "&e%player% &c(%{totalfs}%&c) &7has payed respects using &e/f"
+
+command /l <player>:
+    aliases: givethel, tossthel
+    cooldown: 60 seconds
+    cooldown storage: {l::%player's uuid%}
+    cooldown message: &cL: &7You can only toss the L every 60 seconds.
+    trigger:
+        add 1 to {totalls}
+        add 1 to {%arg-1%.ls}
+        broadcast "&e%player% &7tosses the L to &e%arg-1%&c(%{%arg-1%.ls}%&c)&7 using &e/L"
+
+command /pog:
+    aliases: poggers, pogger
+    cooldown: 60 seconds
+    cooldown storage: {pog::%player's uuid%}
+    cooldown message: &7You can only pog respects every 60 seconds.
+    trigger:
+        add 1 to {pogcount}
+        broadcast "&e%player% &c(%{pogcount}%&c) &7just pogged using &e/pog"
+        
+on death of player:
+    add 1 to {totaldeaths}
+    add 1 to {%player%.deaths}
+    wait 4 ticks
+    broadcast "Death Number %{totaldeaths}%"
+    stop
